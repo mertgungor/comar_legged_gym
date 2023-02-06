@@ -73,6 +73,11 @@ def play(args):
     camera_vel = np.array([1., 1., 0.])
     camera_direction = np.array(env_cfg.viewer.lookat) - np.array(env_cfg.viewer.pos)
     img_idx = 0
+    dof_pos_error = [[] for i in range(12)]
+    vel_x_error = []
+    vel_y_error = []
+    vel_yaw_error = []
+
 
     for i in range(10*int(env.max_episode_length)):
         actions = policy(obs.detach())
@@ -86,6 +91,13 @@ def play(args):
             camera_position += camera_vel * env.dt
             env.set_camera(camera_position, camera_position + camera_direction)
 
+        vel_x_error.append(abs(env.commands[robot_index, 0].item() - env.base_lin_vel[robot_index, 0].item() ))
+        vel_y_error.append(abs(env.commands[robot_index, 1].item() - env.base_lin_vel[robot_index, 1].item() ))
+        vel_yaw_error.append(abs(env.commands[robot_index, 2].item() - env.base_lin_vel[robot_index, 2].item() ))
+
+        for joint in range(len(actions[robot_index, :])):
+            dof_pos_error[joint].append(abs(actions[robot_index, joint].item() - env.dof_pos[robot_index, joint].item()))
+        
         if i < stop_state_log:
             logger.log_states(
                 {
@@ -105,6 +117,13 @@ def play(args):
             )
         elif i==stop_state_log:
             logger.plot_states()
+            for joint in range(len(actions[robot_index, :])):
+                print(joint, " :", np.mean(np.array(dof_pos_error[joint])) * (360/(3.14159*2)))
+            print("Mean DOF pos error (degree): ", np.mean(np.array(dof_pos_error)) * (360/(3.14159*2)))
+            print("Mean vel x error (m/s): ", np.mean(np.array(vel_x_error)))
+            print("Mean vel y error (m/s): ", np.mean(np.array(vel_y_error)))
+            print("Mean vel yaw error (degree/s): ", np.mean(np.array(vel_yaw_error)) * (360/(3.14159*2)))
+
         if  0 < i < stop_rew_log:
             if infos["episode"]:
                 num_episodes = torch.sum(env.reset_buf).item()
