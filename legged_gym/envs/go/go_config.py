@@ -60,6 +60,10 @@ class GoRoughCfg( LeggedRobotCfg ):
         # decimation: Number of control action updates @ sim DT per policy DT
         decimation = 4
 
+    #class terrain( LeggedRobotCfg.terrain ):
+    #    mesh_type = 'plane'
+    #    measure_heights = False
+
     class asset( LeggedRobotCfg.asset ):
         file = '{LEGGED_GYM_ROOT_DIR}/resources/robots/a1/urdf/a1.urdf'
         name = "go"
@@ -81,5 +85,12 @@ class GoRoughCfgPPO( LeggedRobotCfgPPO ):
     class runner( LeggedRobotCfgPPO.runner ):
         run_name = ''
         experiment_name = 'rough_go'
+    #class policy( LeggedRobotCfgPPO.policy):
+    #    actor_hidden_dims =  [128, 64, 32]
+    #    critic_hidden_dims = [128, 64, 32]
+    #    activation = 'elu' # can be elu, relu, selu, crelu, lrelu, tanh, sigmoid
+#
+    #class runner( LeggedRobotCfgPPO.runner):
+    #    max_iterations = 300
 
   
