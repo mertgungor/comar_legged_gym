@@ -96,7 +96,7 @@ def play(args):
         vel_yaw_error.append(abs(env.commands[robot_index, 2].item() - env.base_lin_vel[robot_index, 2].item() ))
 
         for joint in range(len(actions[robot_index, :])):
-            dof_pos_error[joint].append(abs(actions[robot_index, joint].item() - env.dof_pos[robot_index, joint].item()))
+            dof_pos_error[joint].append((actions[robot_index, joint].item() - env.dof_pos[robot_index, joint].item()))
         
         if i < stop_state_log:
             logger.log_states(
