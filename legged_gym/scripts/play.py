@@ -52,9 +52,28 @@ def play(args):
 
     # prepare environment
     env, _ = task_registry.make_env(name=args.task, args=args, env_cfg=env_cfg)
+
+    # print("------------- ENV ----------------")
+    # print(env.num_envs    , "\n",
+    #         env.num_obs           , "\n",
+    #         env.num_privileged_obs, "\n",
+    #         env.num_actions       , "\n",
+    #         env.max_episode_length, "\n",
+    #         env.privileged_obs_buf, "\n",
+    #         env.obs_buf           , "\n",
+    #         env.rew_buf           , "\n",
+    #         env.reset_buf         , "\n",
+    #         env.episode_length_buf, "\n",
+    #         env.extras            , "\n",
+    #         env.device             )
+    # print("------------- ENV ----------------")
+    
+
     obs = env.get_observations()
     # load policy
     train_cfg.runner.resume = True
+
+
     ppo_runner, train_cfg = task_registry.make_alg_runner(env=env, name=args.task, args=args, train_cfg=train_cfg)
     policy = ppo_runner.get_inference_policy(device=env.device)
     
@@ -96,7 +115,7 @@ def play(args):
         vel_yaw_error.append(abs(env.commands[robot_index, 2].item() - env.base_lin_vel[robot_index, 2].item() ))
 
         for joint in range(len(actions[robot_index, :])):
-            dof_pos_error[joint].append((actions[robot_index, joint].item() - env.dof_pos[robot_index, joint].item()))
+            dof_pos_error[joint].append(abs(actions[robot_index, joint].item() - env.dof_pos[robot_index, joint].item()))
         
         if i < stop_state_log:
             logger.log_states(

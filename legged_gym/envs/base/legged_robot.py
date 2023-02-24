@@ -87,6 +87,8 @@ class LeggedRobot(BaseTask):
         # step physics and render each frame
         self.render()
         for _ in range(self.cfg.control.decimation):
+            # print(self.actions)
+            # print("-----------")
             self.torques = self._compute_torques(self.actions).view(self.torques.shape)
             self.gym.set_dof_actuation_force_tensor(self.sim, gymtorch.unwrap_tensor(self.torques))
             self.gym.simulate(self.sim)
@@ -217,13 +219,71 @@ class LeggedRobot(BaseTask):
                                     self.dof_vel * self.obs_scales.dof_vel,
                                     self.actions
                                     ),dim=-1)
+
+        torch.set_printoptions(profile="full")
+        # print(self.obs_buf)
+        # print("------------------\n")
         # add perceptive inputs if not blind
+
+        #print(self.obs_buf.shape)
+        #print(self.obs_buf)
+        #print("------------------")
+
+        #print(self.root_states[:, 7:10])
+        #print(self.base_lin_vel)
+        #print("-------------------")
+        
         if self.cfg.terrain.measure_heights:
             heights = torch.clip(self.root_states[:, 2].unsqueeze(1) - 0.5 - self.measured_heights, -1, 1.) * self.obs_scales.height_measurements
             self.obs_buf = torch.cat((self.obs_buf, heights), dim=-1)
         # add noise if needed
         if self.add_noise:
             self.obs_buf += (2 * torch.rand_like(self.obs_buf) - 1) * self.noise_scale_vec
+
+        #print("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW")
+        #print("base_lin_vel -------------------------")
+        #print(self.base_lin_vel)
+        #print(self.base_lin_vel.shape)
+        #print("\n\n")
+ #
+        #print("base_ang_vell -------------------------")
+        #print(self.base_ang_vel)
+        #print(self.base_ang_vel.shape)
+        #print("\n\n")
+ #
+        #print("projected_gravity -------------------------")
+        #print(self.projected_gravity)
+        #print(self.projected_gravity.shape)
+        #print("quat: ", self.base_quat)
+        #print("gravity vec ", self.gravity_vec)
+        #print("\n\n")
+ #
+        #print("commands -------------------------")
+        #print(self.commands[:,:3])
+        #print(self.commands.shape)
+        #print("\n\n")
+ #
+        #print("dof_pos -------------------------")
+        #print(self.dof_pos)
+        #print(self.dof_pos.shape)
+        #print("\n\n")
+ #
+        #print("default_dof_pos -------------------------")
+        #print(self.default_dof_pos)
+        #print(self.default_dof_pos.shape)
+        #print("\n\n")
+ #
+        #print("dof_vel -------------------------")
+        #print(self.dof_vel)
+        #print(self.dof_vel.shape)
+        #print("\n\n")
+ #
+        #print("actions -------------------------")
+        #print(self.actions)
+        #print(self.actions.shape)
+        #print("\n\n")
+ #
+        #print("WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW")
 
     def create_sim(self):
         """ Creates simulation, terrain and evironments
@@ -297,6 +357,11 @@ class LeggedRobot(BaseTask):
                 self.dof_pos_limits[i, 1] = props["upper"][i].item()
                 self.dof_vel_limits[i] = props["velocity"][i].item()
                 self.torque_limits[i] = props["effort"][i].item()
+
+                #print("------ torque limits -------")
+                #print(props["effort"])
+                #print("----------")
+
                 # soft limits
                 m = (self.dof_pos_limits[i, 0] + self.dof_pos_limits[i, 1]) / 2
                 r = self.dof_pos_limits[i, 1] - self.dof_pos_limits[i, 0]
@@ -362,6 +427,16 @@ class LeggedRobot(BaseTask):
             [torch.Tensor]: Torques sent to the simulation
         """
         #pd controller
+        #print("self.cfg.control.action_scale: ", self.cfg.control.action_scale)
+        #print("actions: ", actions)
+        #print("self.p_gains: ", self.p_gains)
+        #print("self.default_dof_pos: ", self.default_dof_pos)
+        #print("self.dof_pos: ", self.dof_pos)
+        #print("self.d_gains: ", self.d_gains)
+        #print("self.dof_vel: ", self.dof_vel)
+        #print("self.torque_limits: ", self.torque_limits)
+        #print("------------------------------------")
+
         actions_scaled = actions * self.cfg.control.action_scale
         control_type = self.cfg.control.control_type
         if control_type=="P":
@@ -484,6 +559,7 @@ class LeggedRobot(BaseTask):
         # get gym GPU state tensors
         actor_root_state = self.gym.acquire_actor_root_state_tensor(self.sim)
         dof_state_tensor = self.gym.acquire_dof_state_tensor(self.sim)
+
         net_contact_forces = self.gym.acquire_net_contact_force_tensor(self.sim)
         self.gym.refresh_dof_state_tensor(self.sim)
         self.gym.refresh_actor_root_state_tensor(self.sim)

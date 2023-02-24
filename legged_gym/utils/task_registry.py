@@ -144,6 +144,16 @@ class TaskRegistry():
             log_dir = os.path.join(log_root, datetime.now().strftime('%b%d_%H-%M-%S') + '_' + train_cfg.runner.run_name)
         
         train_cfg_dict = class_to_dict(train_cfg)
+        #print("WWWWWWWWWWWWWWWWWWWWWWWWWWWW")
+
+        #print("env: ", env )
+        #print("train_cfg_dict: ", train_cfg_dict["runner"] )
+        #print("log_dir: ", log_dir )
+        #print("device: ", type(args.rl_device) )
+
+
+        #print("WWWWWWWWWWWWWWWWWWWWWWWWWWWW")
+
         runner = OnPolicyRunner(env, train_cfg_dict, log_dir, device=args.rl_device)
         #save resume path before creating a new log_dir
         resume = train_cfg.runner.resume
