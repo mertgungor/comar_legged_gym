@@ -5,20 +5,20 @@ class AselsanCfg( LeggedRobotCfg ):
         pos = [0.0, 0.0, 0.42] # x,y,z [m]
         default_joint_angles = { # = target angles [rad] when action = 0.0
             
-            "comar/abad_1_joint" :  0.1,  # [rad]
-            "comar/abad_2_joint" :  0.1,  # [rad]
-            "comar/abad_3_joint" : -0.1,  # [rad]
-            "comar/abad_4_joint" : -0.1,  # [rad]
+            "comar/abad_1_joint" :  0.1,  # [rad] FL hip
+            "comar/abad_2_joint" : -0.1,  # [rad] FR hip
+            "comar/abad_3_joint" :  0.1,  # [rad] RL hip
+            "comar/abad_4_joint" : -0.1,  # [rad] RR hip
             
-            "comar/hip_1_joint"  :  0.8,  # [rad]
-            "comar/hip_2_joint"  :  1.0, # [rad]
-            "comar/hip_3_joint"  :  0.8,  # [rad]
-            "comar/hip_4_joint"  :  1.0, # [rad]
+            "comar/hip_1_joint"  :  0.8,  # [rad] FL thigh
+            "comar/hip_2_joint"  :  0.8,   # [rad] FR thigh
+            "comar/hip_3_joint"  :  1.,  # [rad] RL thigh
+            "comar/hip_4_joint"  :  1.,   # [rad] RR thigh
 
-            "comar/knee_1_joint" : -1.5,   # [rad]
-            "comar/knee_2_joint" : -1.5,   # [rad]
-            "comar/knee_3_joint" : -1.5,   # [rad]
-            "comar/knee_4_joint" : -1.5,   # [rad]
+            "comar/knee_1_joint" : -1.5,   # [rad] FL calf
+            "comar/knee_2_joint" : -1.5,   # [rad] FR calf
+            "comar/knee_3_joint" : -1.5,   # [rad] RL calf
+            "comar/knee_4_joint" : -1.5,   # [rad] RR calf
         }
 
     class env( LeggedRobotCfg.env ):
@@ -31,9 +31,9 @@ class AselsanCfg( LeggedRobotCfg ):
     class asset( LeggedRobotCfg.asset ):
         file                        = '{LEGGED_GYM_ROOT_DIR}/resources/robots/comar/urdf/comar_a1.urdf'
         flip_visual_attachments     = False
-        foot_name                   = "knee"
+        # foot_name                   = "knee"
         terminate_after_contacts_on = ["base"]
-        penalize_contacts_on        = ["knee", "hip"]
+        # penalize_contacts_on        = ["knee", "hip"]
         self_collisions             = 1 # 1 to disable, 0 to enable...bitwise filter
         # fix_base_link               = True
         # disable_gravity             = True
@@ -43,7 +43,7 @@ class AselsanCfg( LeggedRobotCfg ):
         control_type = 'P'
         stiffness    = {'joint': 40}  # [N*m/rad]
         damping      = {'joint': 1}     # [N*m*s/rad]
-        action_scale = 0.25
+        action_scale = 0.3
         decimation   = 4
 
     # class rewards:
@@ -73,13 +73,15 @@ class AselsanCfg( LeggedRobotCfg ):
     #     max_contact_force = 100. # forces above this value are penalized
 
     class rewards( LeggedRobotCfg.rewards ):
-        soft_dof_pos_limit = 0.9
+        soft_dof_pos_limit = 1.
         base_height_target = 0.4
         class scales( LeggedRobotCfg.rewards.scales ):
 
-            base_height      = -1.0
+            base_height      =  0.0
             collision        = -5e-2 # default -1.
-            feet_air_time    =  1.0
+            feet_air_time    =  1.5
+            stand_still      = -1.0 # default -0.
+            torques          = -1e-4 # default -0.00001
 
 
 
