@@ -11,14 +11,14 @@ class AselsanCfg( LeggedRobotCfg ):
             "comar/abad_4_joint" : -0.1,  # [rad]
             
             "comar/hip_1_joint"  :  0.8,  # [rad]
-            "comar/hip_2_joint"  :  1.0, # [rad]
+            "comar/hip_2_joint"  :  1.,  # [rad]
             "comar/hip_3_joint"  :  0.8,  # [rad]
-            "comar/hip_4_joint"  :  1.0, # [rad]
+            "comar/hip_4_joint"  :  1.,  # [rad]
 
-            "comar/knee_1_joint" : -1.5,   # [rad]
-            "comar/knee_2_joint" : -1.5,   # [rad]
-            "comar/knee_3_joint" : -1.5,   # [rad]
-            "comar/knee_4_joint" : -1.5,   # [rad]
+            "comar/knee_1_joint" : -1.62,  # [rad]
+            "comar/knee_2_joint" : -1.62,  # [rad]
+            "comar/knee_3_joint" : -1.62,  # [rad]
+            "comar/knee_4_joint" : -1.62,  # [rad]
         }
 
     class env( LeggedRobotCfg.env ):
@@ -29,10 +29,10 @@ class AselsanCfg( LeggedRobotCfg ):
         measure_heights = False
 
     class asset( LeggedRobotCfg.asset ):
-        file                        = '{LEGGED_GYM_ROOT_DIR}/resources/robots/comar/urdf/comar_a1.urdf'
+        file                        = '{LEGGED_GYM_ROOT_DIR}/resources/robots/comar/urdf/comar.urdf'
         flip_visual_attachments     = False
         foot_name                   = "knee"
-        terminate_after_contacts_on = ["base"]
+        terminate_after_contacts_on = ["base", "hip"]
         penalize_contacts_on        = ["knee", "hip"]
         self_collisions             = 1 # 1 to disable, 0 to enable...bitwise filter
         # fix_base_link               = True
@@ -41,54 +41,26 @@ class AselsanCfg( LeggedRobotCfg ):
     class control( LeggedRobotCfg.control ):
         # PD Drive parameters:
         control_type = 'P'
-        stiffness    = {'joint': 40}  # [N*m/rad]
-        damping      = {'joint': 1}     # [N*m*s/rad]
+        stiffness    = {'joint': 20.}  # [N*m/rad]
+        damping      = {'joint': 0.5}     # [N*m*s/rad]
         action_scale = 0.25
         decimation   = 4
 
-    # class rewards:
-    #     class scales:
-    #         termination = -0.0
-    #         tracking_lin_vel = 1.0
-    #         tracking_ang_vel = 0.5
-    #         lin_vel_z = -2.0
-    #         ang_vel_xy = -0.05
-    #         orientation = -0.
-    #         torques = -0.00001
-    #         dof_vel = -0.
-    #         dof_acc = -2.5e-7
-    #         base_height = -0. 
-    #         feet_air_time =  1.0
-    #         collision = -1.
-    #         feet_stumble = -0.0 
-    #         action_rate = -0.01
-    #         stand_still = -0.
-
-    #     only_positive_rewards = True # if true negative total rewards are clipped at zero (avoids early termination problems)
-    #     tracking_sigma = 0.25 # tracking reward = exp(-error^2/sigma)
-    #     soft_dof_pos_limit = 1. # percentage of urdf limits, values above this limit are penalized
-    #     soft_dof_vel_limit = 1.
-    #     soft_torque_limit = 1.
-    #     base_height_target = 1.
-    #     max_contact_force = 100. # forces above this value are penalized
-
     class rewards( LeggedRobotCfg.rewards ):
         soft_dof_pos_limit = 0.9
-        base_height_target = 0.4
+        base_height_target = 0.5
         class scales( LeggedRobotCfg.rewards.scales ):
-
+            torques          = -0.0002
+            dof_pos_limits   = -5.0
             base_height      = -1.0
-            collision        = -5e-2 # default -1.
-            feet_air_time    =  1.0
+            collision        = -5e-2  # default -1.
+            feet_air_time    =  1.   # default 1.
+            # ang_vel_xy       =  -0.08 # -0.05
+            # tracking_lin_vel = 1.5 # 1
+            # tracking_ang_vel = 0.7 # 0.5
+    
 
-
-
-        # class commands( LeggedRobotCfg.commands ):
-
-        #     class ranges( LeggedRobotCfg.commands.ranges ):
   
-        #         lin_vel_x = [-0.6, 0.6] # min max [m/s]
-        #         lin_vel_y = [-0.1, 0.1]   # min max [m/s]
 
 class AselsanCfgPPO( LeggedRobotCfgPPO ):
     class runner( LeggedRobotCfgPPO.runner ):

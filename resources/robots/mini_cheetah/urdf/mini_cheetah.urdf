@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <robot name="mini_cheetah" xmlns:xacro="http://ros.org/wiki/xacro">
     
-    <material name="black">
+  <material name="black">
     <color rgba="0.0 0.0 0.0 1.0"/>
   </material>
   <material name="blue">
@@ -17,7 +17,6 @@
     <color rgba="0.913725490196 0.913725490196 0.847058823529 1.0"/>
   </material>
   <material name="orange">
-    <!-- <color rgba="1.0 0.423529411765 0.0392156862745 1.0"/> -->
     <color rgba="0.12 0.15 0.2 1.0"/>
   </material>
   <material name="brown">
@@ -38,16 +37,18 @@
       </geometry>
     </visual>
     <inertial>
-            <mass value="3.3"/>
-            <origin xyz="0.0 0.0 0.0"/>
-            <inertia ixx="0.011253" ixy="0" ixz="0" iyy="0.362030" iyz="0" izz="0.042673"/>
-        </inertial>
+        <mass value="3.3"/>
+        <origin xyz="0.0 0.0 0.0"/>
+        <inertia ixx="0.011253" ixy="0" ixz="0" iyy="0.362030" iyz="0" izz="0.042673"/>
+    </inertial>
   </link>
+
     <joint name="floating_base" type="fixed">
         <origin rpy="0 0 0" xyz="0 0 0"/>
         <parent link="base"/>
         <child link="trunk"/>
-      </joint>
+    </joint>
+
     <link name="trunk">
         <visual>
             <geometry>
@@ -55,12 +56,7 @@
             </geometry>
             <origin rpy="0 0.0 0" xyz="0.0 0.0 0.0"/>
         </visual>
-        <!-- <collision>
-            <geometry>
-                <mesh filename="meshes/mini_body.obj"/>
-            </geometry>
-            <origin rpy="0 0 0" xyz="0 0 0"/>
-        </collision> -->
+
         <collision>
           <origin rpy="0 0 0" xyz="0 0 0"/>
           <geometry>
@@ -68,11 +64,13 @@
           </geometry>
         </collision>
     </link>
-    <joint name="imu_joint" type="fixed">
+
+  <joint name="imu_joint" type="fixed">
     <parent link="trunk"/>
     <child link="imu_link"/>
     <origin rpy="0 0 0" xyz="0 0 0"/>
   </joint>
+
   <link name="imu_link">
     <inertial>
       <mass value="0.001"/>
@@ -94,15 +92,10 @@
         <origin rpy="0 0 0" xyz="0.19 -0.049 0.0"/>
         <parent link="trunk"/>
         <child link="FR_hip"/>
-        <!-- <actuator gear_ratio="6" voltage="24">
-          <friction damping="0.01" dry_friction="0.2"/>
-          <motor Kt="0.05" R="0.173" TauMax="3"/>
-          <rotor_inertia ixx="33.0e-6" iyy="0.000033" izz="63e-6" iyz="0.0" ixy="0" ixz="0" />
-        </actuator> -->
         <dynamics damping="0" friction="0"/>
         <limit effort="18" lower="-1.6" upper="1.6" velocity="40"/>
-
     </joint>
+
     <link name="FR_hip">
         <inertial>
             <mass value="0.54"/>
@@ -132,6 +125,7 @@
         <dynamics damping="0" friction="0"/>
         <limit effort="18" lower="-2.6" upper="2.6" velocity="40"/>
     </joint>
+
     <link name="FR_thigh">
         <inertial>
             <mass value="0.634"/>
@@ -161,6 +155,7 @@
         <dynamics damping="0" friction="0"/>
         <limit effort="26" lower="-2.6" upper="2.6" velocity="26"/>
     </joint>
+
     <link name="FR_calf">
         <inertial>
             <mass value="0.064"/>
@@ -190,6 +185,7 @@
         <dynamics damping="0" friction="0"/>
         <limit effort="18" lower="-1.6" upper="1.6" velocity="40"/>
     </joint>
+
     <link name="FL_hip">
         <inertial>
             <mass value="0.54"/>
@@ -219,6 +215,7 @@
         <dynamics damping="0" friction="0"/>
         <limit effort="18" lower="-2.6" upper="2.6" velocity="40"/>
     </joint>
+
     <link name="FL_thigh">
         <inertial>
             <mass value="0.634"/>
@@ -248,6 +245,7 @@
         <dynamics damping="0" friction="0"/>
         <limit effort="26" lower="-2.6" upper="2.6" velocity="26"/>
     </joint>
+
     <link name="FL_calf">
         <inertial>
             <mass value="0.064"/>
@@ -306,6 +304,7 @@
         <dynamics damping="0" friction="0"/>
         <limit effort="18" lower="-2.6" upper="2.6" velocity="40"/>
     </joint>
+
     <link name="RR_thigh">
         <inertial>
             <mass value="0.634"/>
@@ -370,6 +369,7 @@
         <dynamics damping="0" friction="0"/>
         <limit effort="18" lower="-1.6" upper="1.6" velocity="40"/>
     </joint>
+    
     <link name="RL_hip">
         <inertial>
             <mass value="0.54"/>

@@ -15,10 +15,10 @@ class MiniCheetahCfg( LeggedRobotCfg ):
             'FR_thigh_joint': -0.8,     # [rad]
             'RR_thigh_joint': -0.8,   # [rad]
 
-            'FL_calf_joint': 1.62,   # [rad]
-            'RL_calf_joint': 1.62,    # [rad]
-            'FR_calf_joint': 1.62,  # [rad]
-            'RR_calf_joint': 1.62,    # [rad]
+            'FL_calf_joint':  1.62,   # [rad]
+            'RL_calf_joint':  1.62,    # [rad]
+            'FR_calf_joint':  1.62,  # [rad]
+            'RR_calf_joint':  1.62,    # [rad]
         }
 
     class control( LeggedRobotCfg.control ):
@@ -61,5 +61,10 @@ class MiniCheetahCfgPPO( LeggedRobotCfgPPO ):
     class runner( LeggedRobotCfgPPO.runner ):
         run_name = ''
         experiment_name = 'mini_cheetah'
+
+    class policy( LeggedRobotCfgPPO.policy):
+        actor_hidden_dims =  [128, 64, 32]
+        critic_hidden_dims = [128, 64, 32]
+        activation = 'elu' # can be elu, relu, selu, crelu, lrelu, tanh, sigmoid
 
   

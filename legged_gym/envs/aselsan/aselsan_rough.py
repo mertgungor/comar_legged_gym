@@ -1,6 +1,6 @@
 from legged_gym.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobotCfgPPO
 
-class AselsanCfg( LeggedRobotCfg ):
+class AselsanRoughCfg( LeggedRobotCfg ):
     class init_state( LeggedRobotCfg.init_state ):
         pos = [0.0, 0.0, 0.42] # x,y,z [m]
         default_joint_angles = { # = target angles [rad] when action = 0.0
@@ -22,10 +22,10 @@ class AselsanCfg( LeggedRobotCfg ):
         }
 
     class env( LeggedRobotCfg.env ):
-        num_observations = 48
+        num_observations = 235
     
     class terrain( LeggedRobotCfg.terrain ):
-        mesh_type       = 'plane'
+        mesh_type       = 'trimesh'
         measure_heights = False
 
     class asset( LeggedRobotCfg.asset ):
@@ -83,23 +83,16 @@ class AselsanCfg( LeggedRobotCfg ):
 
 
 
-        # class commands( LeggedRobotCfg.commands ):
-
-        #     class ranges( LeggedRobotCfg.commands.ranges ):
-  
-        #         lin_vel_x = [-0.6, 0.6] # min max [m/s]
-        #         lin_vel_y = [-0.1, 0.1]   # min max [m/s]
-
-class AselsanCfgPPO( LeggedRobotCfgPPO ):
+class AselsanRoughCfgPPO( LeggedRobotCfgPPO ):
     class runner( LeggedRobotCfgPPO.runner ):
         run_name = ''
         experiment_name = 'comar_flat'
 
     class policy( LeggedRobotCfgPPO.policy):
-        actor_hidden_dims  = [128, 64, 32]
-        critic_hidden_dims = [128, 64, 32]
+        actor_hidden_dims  = [512, 256, 128]
+        critic_hidden_dims = [512, 256, 128]
         activation = 'elu' # can be elu, relu, selu, crelu, lrelu, tanh, sigmoid
 
     class runner( LeggedRobotCfgPPO.runner):
-        max_iterations = 300
+        max_iterations = 1500
   

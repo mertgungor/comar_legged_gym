@@ -32,7 +32,7 @@ from legged_gym.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobot
 
 class Go1Cfg( LeggedRobotCfg ):
     class init_state( LeggedRobotCfg.init_state ):
-        pos = [0.0, 0.0, 0.38]  # x,y,z [m]
+        pos = [0.0, 0.0, 0.50]  # x,y,z [m]
         default_joint_angles = {  # = target angles [rad] when action = 0.0
             "FL_hip_joint": 0.1,  # [rad]
             "RL_hip_joint": 0.1,  # [rad]
@@ -57,8 +57,8 @@ class Go1Cfg( LeggedRobotCfg ):
     class control( LeggedRobotCfg.control ):
         # PD Drive parameters:
         control_type = 'P'
-        stiffness = {'joint': 50.0}  # [N*m/rad]
-        damping = {'joint': 0.8}     # [N*m*s/rad]
+        stiffness = {'joint': 100.0}  # [N*m/rad]
+        damping = {'joint': 1.6}     # [N*m*s/rad]
         # action scale: target angle = actionScale * action + defaultAngle
         action_scale = 0.25
         # decimation: Number of control action updates @ sim DT per policy DT
@@ -66,16 +66,18 @@ class Go1Cfg( LeggedRobotCfg ):
 
     class asset( LeggedRobotCfg.asset ):
         file = '{LEGGED_GYM_ROOT_DIR}/resources/robots/go1/urdf/go1.urdf'
-        name = "go1"
+        name = "aliengo"
         foot_name = "calf"
         penalize_contacts_on = ["thigh", "calf"]
         terminate_after_contacts_on = ["base", "hip"]
         self_collisions = 1
         #fix_base_link = True
-  
+        #disable_gravity = True
+        flip_visual_attachments = True
+
     class rewards( LeggedRobotCfg.rewards ):
         soft_dof_pos_limit = 0.9
-        base_height_target = 0.4
+
         class scales( LeggedRobotCfg.rewards.scales ):
             termination = 0.0
             #tracking_lin_vel = 1
@@ -88,7 +90,6 @@ class Go1Cfg( LeggedRobotCfg ):
             feet_air_time = 1.5
             collision = -5e-2
             #action_rate = -0.01
-            base_height = -0.1
 
     class env( LeggedRobotCfg.env ):
         num_observations = 48
@@ -103,7 +104,7 @@ class Go1CfgPPO( LeggedRobotCfgPPO ):
         entropy_coef = 0.01
     class runner( LeggedRobotCfgPPO.runner ):
         run_name = ''
-        experiment_name = 'go1_flat'
+        experiment_name = 'b1_flat'
 
     class policy( LeggedRobotCfgPPO.policy):
         actor_hidden_dims =  [128, 64, 32]
@@ -111,4 +112,6 @@ class Go1CfgPPO( LeggedRobotCfgPPO ):
         activation = 'elu' # can be elu, relu, selu, crelu, lrelu, tanh, sigmoid
 
     class runner( LeggedRobotCfgPPO.runner):
-        max_iterations = 1100
+        max_iterations = 1000
+
+  

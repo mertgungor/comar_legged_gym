@@ -235,6 +235,7 @@ class LeggedRobot(BaseTask):
         
         if self.cfg.terrain.measure_heights:
             heights = torch.clip(self.root_states[:, 2].unsqueeze(1) - 0.5 - self.measured_heights, -1, 1.) * self.obs_scales.height_measurements
+            # print("heights shape", heights.shape)
             self.obs_buf = torch.cat((self.obs_buf, heights), dim=-1)
         # add noise if needed
         if self.add_noise:
@@ -566,8 +567,13 @@ class LeggedRobot(BaseTask):
         self.gym.refresh_net_contact_force_tensor(self.sim)
 
         # create some wrapper tensors for different slices
+
+        # self.root_states = torch.nan_to_num(gymtorch.wrap_tensor(actor_root_state),0)
+        # self.dof_state = torch.nan_to_num(gymtorch.wrap_tensor(dof_state_tensor), 0)
+
         self.root_states = gymtorch.wrap_tensor(actor_root_state)
         self.dof_state = gymtorch.wrap_tensor(dof_state_tensor)
+
         self.dof_pos = self.dof_state.view(self.num_envs, self.num_dof, 2)[..., 0]
         self.dof_vel = self.dof_state.view(self.num_envs, self.num_dof, 2)[..., 1]
         self.base_quat = self.root_states[:, 3:7]
@@ -848,6 +854,12 @@ class LeggedRobot(BaseTask):
         points = torch.zeros(self.num_envs, self.num_height_points, 3, device=self.device, requires_grad=False)
         points[:, :, 0] = grid_x.flatten()
         points[:, :, 1] = grid_y.flatten()
+        # shape: num envs x (11x17) x 3        last 3 is x,y,z
+
+        # print("shape", points.shape, "\n")
+        # print("points", points, "\n")
+        # print("-----------------\n")
+
         return points
 
     def _get_heights(self, env_ids=None):
@@ -871,6 +883,10 @@ class LeggedRobot(BaseTask):
         if env_ids:
             points = quat_apply_yaw(self.base_quat[env_ids].repeat(1, self.num_height_points), self.height_points[env_ids]) + (self.root_states[env_ids, :3]).unsqueeze(1)
         else:
+            # print(self.num_height_points)
+            # print("root states" ,(self.root_states[:, :3]).unsqueeze(1))
+
+            # num height points is 187 = 11*17
             points = quat_apply_yaw(self.base_quat.repeat(1, self.num_height_points), self.height_points) + (self.root_states[:, :3]).unsqueeze(1)
 
         points += self.terrain.cfg.border_size
